@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#EDEEE9">
+<title>市场速览 · AI 算力链</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#14181C; --paper:#EDEEE9; --card:#F6F6F3; --rule:#C9CBC3;
+  --muted:#6E7570; --accent:#2B4C7E;
+  --up:#C4342B; --down:#1E7A5E;
+  --cond:"IBM Plex Sans Condensed","Noto Sans SC",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --body:"Noto Sans SC","IBM Plex Sans Condensed",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:860px;margin:0 auto;padding:26px 20px 80px}
+
+/* masthead */
+.mast{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+  border-bottom:2px solid var(--ink);padding-bottom:10px}
+.mast h1{font-family:var(--cond);font-weight:700;font-size:29px;margin:0;
+  letter-spacing:-.01em}
+.mast .date{font-family:var(--mono);font-size:12px;color:var(--muted);
+  letter-spacing:.06em;text-transform:uppercase}
+.mast .spacer{flex:1}
+.pill{font-family:var(--mono);font-size:11px;letter-spacing:.04em;
+  background:none;border:1px solid var(--rule);border-radius:100px;
+  padding:4px 11px;color:var(--muted);cursor:pointer}
+.pill:hover{border-color:var(--ink);color:var(--ink)}
+.pill:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.stale{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+/* period tabs */
+.periods{display:flex;gap:0;margin:16px 0 0;border-bottom:1px solid var(--rule);
+  overflow-x:auto;-webkit-overflow-scrolling:touch}
+.periods button{flex:0 0 auto;background:none;border:none;cursor:pointer;
+  font-family:var(--cond);font-size:14px;font-weight:600;color:var(--muted);
+  padding:8px 15px;border-bottom:2px solid transparent;margin-bottom:-1px;
+  white-space:nowrap}
+.periods button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.periods button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+/* brief */
+.brief{margin:20px 0 6px;padding:17px 19px;background:var(--card);
+  border-left:3px solid var(--ink)}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+.brief ul{margin:0;padding:0;list-style:none}
+.brief li{padding:7px 0;border-top:1px solid var(--rule);font-size:14.5px}
+.brief li:first-child{border-top:none;padding-top:0}
+
+/* value-chain spine */
+.tier{margin-top:28px;position:relative;padding-left:20px}
+.tier::before{content:"";position:absolute;left:0;top:8px;bottom:6px;
+  width:2px;background:var(--rule)}
+.tier-head{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.tier-head .lbl{font-family:var(--cond);font-weight:700;font-size:17px}
+.tier-head .sub{font-family:var(--mono);font-size:10.5px;color:var(--muted);
+  letter-spacing:.08em;text-transform:uppercase}
+.tier-head .avg{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:500}
+.note{font-size:13px;color:var(--muted);line-height:1.5;margin:5px 0 9px;
+  padding-left:9px;border-left:2px solid var(--rule)}
+
+/* rows */
+.row{display:grid;grid-template-columns:1fr 76px 72px 60px;align-items:center;
+  gap:10px;padding:0;border-top:1px solid var(--rule)}
+.row:first-of-type{border-top:1px solid var(--ink)}
+.row>.hit{display:contents}
+.rowbtn{display:grid;grid-template-columns:subgrid;grid-column:1/-1;
+  align-items:center;gap:10px;padding:9px 0;background:none;border:none;
+  width:100%;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.rowbtn:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.nm{min-width:0}
+.nm .n1{font-weight:500;font-size:14.5px;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis}
+.nm .tk{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.04em}
+.px{font-family:var(--mono);font-size:13px;text-align:right;
+  font-variant-numeric:tabular-nums;color:var(--muted)}
+.ch{font-family:var(--mono);font-size:13.5px;font-weight:600;text-align:right;
+  font-variant-numeric:tabular-nums}
+.spark{height:22px;width:60px}
+.up{color:var(--up)} .down{color:var(--down)} .flat{color:var(--muted)}
+
+/* expanded detail */
+.detail{grid-column:1/-1;display:none;padding:2px 0 12px}
+.row.open .detail{display:block}
+.pgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;
+  background:var(--rule);border:1px solid var(--rule)}
+.pgrid div{background:var(--card);padding:7px 4px;text-align:center}
+.pgrid .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;
+  color:var(--muted);text-transform:uppercase}
+.pgrid .v{font-family:var(--mono);font-size:13px;font-weight:600;
+  font-variant-numeric:tabular-nums;margin-top:2px}
+
+/* news */
+.news{margin-top:42px;border-top:2px solid var(--ink);padding-top:14px}
+.news a{display:block;text-decoration:none;color:inherit;padding:11px 0;
+  border-bottom:1px solid var(--rule)}
+.news a:hover .hl{text-decoration:underline;text-decoration-color:var(--accent)}
+.news a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.news .meta{font-family:var(--mono);font-size:10.5px;color:var(--muted);
+  letter-spacing:.06em;margin-bottom:3px}
+.news .hl{font-size:14.5px;line-height:1.45}
+.empty{padding:24px 0;color:var(--muted);font-size:14px}
+footer{margin-top:38px;font-family:var(--mono);font-size:10.5px;color:var(--muted);
+  letter-spacing:.05em;line-height:1.7}
+
+@media (max-width:520px){
+  .wrap{padding:18px 14px 60px}
+  .mast h1{font-size:24px}
+  .row{grid-template-columns:1fr 70px 66px}
+  .spark{display:none}
+  .pgrid{grid-template-columns:repeat(3,1fr)}
+}
+@media (prefers-reduced-motion:no-preference){
+  .tier,.brief{animation:rise .35s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(5px)}}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="mast">
+    <h1 id="title">市场速览</h1>
+    <span class="date" id="date">—</span>
+    <span class="spacer"></span>
+    <span class="stale" id="stale"></span>
+    <button class="pill" id="lang">EN</button>
+    <button class="pill" id="flip">红涨 / 绿跌</button>
+  </header>
+
+  <nav class="periods" id="periods" role="tablist"></nav>
+
+  <section class="brief">
+    <div class="eyebrow" id="briefLbl">今日要点</div>
+    <ul id="brief"><li>正在读取…</li></ul>
+  </section>
+
+  <div id="chain"></div>
+
+  <section class="news">
+    <div class="eyebrow" id="newsLbl">新闻流</div>
+    <div id="news"><div class="empty">正在读取…</div></div>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+/* ═══ 文案 ═══════════════════════════════════════════════ */
+const T = {
+  zh:{title:"市场速览",brief:"今日要点",news:"新闻流",sector:"板块",
+      updated:"更新",demo:"演示数据",empty:"暂无数据",
+      periods:{"1d":"日","1w":"周","1m":"月","ytd":"年初至今","1y":"1年"},
+      foot:"数据源 · yfinance / akshare · 延迟行情,仅供研究参考",
+      hint:"点任意一行展开全部周期"},
+  en:{title:"Market Brief",brief:"Today's Read",news:"Newsflow",sector:"Sector",
+      updated:"Updated",demo:"Demo data",empty:"No data",
+      periods:{"1d":"1D","1w":"1W","1m":"1M","ytd":"YTD","1y":"1Y"},
+      foot:"Data · yfinance / akshare · Delayed quotes, research use only",
+      hint:"Tap any row for all periods"}
+};
+const PERIODS = ["1d","1w","1m","ytd","1y"];
+
+/* ═══ 演示数据(脚本没跑时显示)═══════════════════════════ */
+const DEMO = {updated:"演示",
+  brief:{zh:["<b>光模块</b>逆势走强,而<b>云厂商</b>同步回落 —— 这种背离通常意味着市场在抢预期,而非确认订单落地。",
+             "<b>存储</b>板块内部分化:HBM 敞口大的走强,利基型 DRAM 承压。"],
+         en:["<b>Optics</b> rallied while <b>hyperscalers</b> sold off — a divergence that usually means positioning ahead of orders, not confirmation of them.",
+             "<b>Memory</b> split internally: HBM-levered names up, commodity DRAM under pressure."]},
+  tiers:[{zh:"下游 · 光模块",en:"Downstream · Optics",sub:"Optical Modules",
+    note:{zh:"全线走强,月线已收复前期回调,趋势延续而非反弹。",
+          en:"Broad-based strength; monthly trend intact rather than a bounce."},
+    items:[{zh:"中际旭创",en:"Innolight",tk:"300308",ccy:"¥",px:186.4,
+            ret:{"1d":4.21,"1w":6.8,"1m":12.4,"ytd":38.2,"1y":64.1},
+            spark:[160,164,162,168,171,169,175,178,176,182,186]},
+           {zh:"新易盛",en:"Eoptolink",tk:"300502",ccy:"¥",px:96.2,
+            ret:{"1d":3.55,"1w":5.1,"1m":9.7,"ytd":29.4,"1y":51.3},
+            spark:[85,87,86,89,90,89,92,93,92,95,96]}]}],
+  news:[{src:"财联社",time:"09:12",zh:"云厂商上调数据中心资本开支指引,光通信供应链受益",en:"",url:"#"}]};
+
+let lang="zh", period="1d", redUp=true, D=null;
+const t = () => T[lang];
+
+const cls = v => v==null?"flat": v>.001?(redUp?"up":"down"): v<-.001?(redUp?"down":"up"):"flat";
+const sign = v => v==null?"—":(v>0?"+":"")+v.toFixed(2)+"%";
+const fmtPx = (v,c) => v==null?"—":(c||"")+(v>=1000?v.toLocaleString(undefined,{maximumFractionDigits:0}):v.toFixed(2));
+
+function sparkSVG(pts,pos){
+  if(!pts||pts.length<2) return '<span class="spark"></span>';
+  const lo=Math.min(...pts),hi=Math.max(...pts),span=(hi-lo)||1;
+  const d=pts.map((p,i)=>{
+    const x=(i/(pts.length-1))*58+1, y=20-((p-lo)/span)*18;
+    return (i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1);
+  }).join(" ");
+  const c = pos?(redUp?"#C4342B":"#1E7A5E"):(redUp?"#1E7A5E":"#C4342B");
+  return `<svg class="spark" viewBox="0 0 60 22" aria-hidden="true"><path d="${d}"
+    fill="none" stroke="${c}" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
+}
+
+function renderPeriods(){
+  document.getElementById("periods").innerHTML = PERIODS.map(p=>
+    `<button role="tab" data-p="${p}" aria-selected="${p===period}">${t().periods[p]}</button>`
+  ).join("");
+}
+
+function render(){
+  if(!D) return;
+  const L=t();
+  document.documentElement.lang = lang==="zh"?"zh-CN":"en";
+  document.getElementById("title").textContent=L.title;
+  document.getElementById("briefLbl").textContent=L.brief;
+  document.getElementById("newsLbl").textContent=L.news;
+  document.getElementById("lang").textContent = lang==="zh"?"EN":"中文";
+  document.getElementById("date").textContent=
+    new Date().toLocaleDateString(lang==="zh"?"zh-CN":"en-US",
+      {month:"short",day:"numeric",weekday:"short"});
+  document.getElementById("stale").textContent=L.updated+" "+(D.updated||"—");
+  document.getElementById("foot").innerHTML=L.foot+"<br>"+L.hint;
+  renderPeriods();
+
+  const bl=(D.brief&&D.brief[lang]&&D.brief[lang].length)?D.brief[lang]:[L.empty];
+  document.getElementById("brief").innerHTML=bl.map(x=>`<li>${x}</li>`).join("");
+
+  document.getElementById("chain").innerHTML=(D.tiers||[]).map((tier,ti)=>{
+    const vals=tier.items.map(i=>i.ret&&i.ret[period]).filter(v=>typeof v==="number");
+    const avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;
+    const note=tier.note&&tier.note[lang];
+    const rows=tier.items.map((i,ri)=>{
+      const v=i.ret?i.ret[period]:null;
+      const cells=PERIODS.map(p=>`<div><div class="k">${L.periods[p]}</div>
+        <div class="v ${cls(i.ret?i.ret[p]:null)}">${sign(i.ret?i.ret[p]:null)}</div></div>`).join("");
+      return `<div class="row" id="r${ti}-${ri}">
+        <button class="rowbtn" data-row="r${ti}-${ri}" aria-expanded="false">
+          <span class="nm"><span class="n1">${i[lang]||i.zh}</span><span class="tk">${i.tk}</span></span>
+          <span class="px">${fmtPx(i.px,i.ccy)}</span>
+          <span class="ch ${cls(v)}">${sign(v)}</span>
+          ${sparkSVG(i.spark, v>0)}
+        </button>
+        <div class="detail"><div class="pgrid">${cells}</div></div>
+      </div>`;
+    }).join("");
+    return `<section class="tier">
+      <div class="tier-head"><span class="lbl">${tier[lang]||tier.zh}</span>
+        <span class="sub">${tier.sub||""}</span>
+        <span class="avg ${cls(avg)}">${L.sector} ${sign(avg)}</span></div>
+      ${note?`<div class="note">${note}</div>`:""}
+      ${rows}</section>`;
+  }).join("");
+
+  const nl=D.news||[];
+  document.getElementById("news").innerHTML= nl.length? nl.map(n=>{
+    const headline = (lang==="en" && n.en) ? n.en : n.zh;
+    return `<a href="${n.url||"#"}" target="_blank" rel="noopener">
+      <div class="meta">${n.src} · ${n.time}</div><div class="hl">${headline}</div></a>`;
+  }).join("") : `<div class="empty">${L.empty}</div>`;
+}
+
+/* ═══ 交互 ═══════════════════════════════════════════════ */
+document.getElementById("lang").onclick = ()=>{ lang = lang==="zh"?"en":"zh"; render(); };
+document.getElementById("flip").onclick = e=>{
+  redUp=!redUp; e.target.textContent = redUp?"红涨 / 绿跌":"绿涨 / 红跌"; render();
+};
+document.getElementById("periods").onclick = e=>{
+  const b=e.target.closest("button[data-p]"); if(!b) return;
+  period=b.dataset.p; render();
+};
+document.getElementById("chain").onclick = e=>{
+  const b=e.target.closest(".rowbtn"); if(!b) return;
+  const row=document.getElementById(b.dataset.row);
+  const open=row.classList.toggle("open");
+  b.setAttribute("aria-expanded",open);
+};
+
+/* ═══ 载入 ═══════════════════════════════════════════════ */
+fetch("data/market.json?t="+Date.now())
+  .then(r=>r.ok?r.json():Promise.reject())
+  .then(d=>{ D=d; render(); })
+  .catch(()=>{ D=DEMO; render();
+    document.getElementById("stale").textContent=t().demo; });
+</script>
+</body>
+</html>
